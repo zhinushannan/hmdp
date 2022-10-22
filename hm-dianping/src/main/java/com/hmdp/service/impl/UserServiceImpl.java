@@ -39,7 +39,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 4. 保存验证码到session
         session.setAttribute("code", code);
         // 5. 发送验证码
-        log.debug("发送短信验证码成功，验证码：{}", code);
+        log.debug("发送短信验证码成功，验证码：{} - {}", phone, code);
         // 返回ok，验证码需要资质认证，模拟发送
         return Result.ok(code);
     }
