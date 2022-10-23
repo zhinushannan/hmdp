@@ -32,19 +32,30 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
 
     @Override
     public Result queryById(Long id) {
+        Shop shop = queryWithPassThrough(id);
+        // 7. 返回
+        return Result.ok(shop);
+    }
+
+    /**
+     * 解决缓存穿透的逻辑
+     *
+     * @param id shop的id
+     * @return 返回shop对象或null
+     */
+    private Shop queryWithPassThrough(Long id) {
         String key = CACHE_SHOP_KEY + id;
         // 1. 从redis查询商铺缓存
         String shopJson = stringRedisTemplate.opsForValue().get(key);
         // 2. 判断是否存在
         if (StrUtil.isNotBlank(shopJson)) {
             // 3. 存在，直接返回
-            Shop shop = JSONUtil.toBean(shopJson, Shop.class);
-            return Result.ok(shop);
+            return JSONUtil.toBean(shopJson, Shop.class);
         }
         // 判断命中的是否是空值
         if (shopJson != null) {
             // 返回错误信息
-            return Result.fail("店铺不存在！");
+            return null;
         }
 
         // 4. 不存在，根据id查询数据库
@@ -53,12 +64,12 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
         if (null == shop) {
             // 将空值写入redis
             stringRedisTemplate.opsForValue().set(key, "", CACHE_NULL_TTL, TimeUnit.MINUTES);
-            return Result.fail("店铺不存在！");
+            return null;
         }
         // 6. 存在，写入redis
         stringRedisTemplate.opsForValue().set(key, JSONUtil.toJsonStr(shop), CACHE_SHOP_TTL, TimeUnit.MINUTES);
         // 7. 返回
-        return Result.ok(shop);
+        return shop;
     }
 
     @Override
