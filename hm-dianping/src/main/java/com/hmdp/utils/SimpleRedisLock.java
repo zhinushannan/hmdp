@@ -23,7 +23,7 @@ public class SimpleRedisLock implements ILock {
      */
     private static final String KEY_PREFIX = "lock:";
 
-    SimpleRedisLock(String name, StringRedisTemplate stringRedisTemplate) {
+    public SimpleRedisLock(String name, StringRedisTemplate stringRedisTemplate) {
         this.name = name;
         this.stringRedisTemplate = stringRedisTemplate;
     }
