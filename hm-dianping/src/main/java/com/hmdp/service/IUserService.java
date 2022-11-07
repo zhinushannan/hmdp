@@ -21,17 +21,15 @@ public interface IUserService extends IService<User> {
      * 根据手机号发送短信，并保存至session中
      *
      * @param phone   手机号
-     * @param session session对象
      * @return 返回失败或成功
      */
-    Result sendCode(String phone, HttpSession session);
+    Result sendCode(String phone);
 
     /**
      * 登录功能
      *
      * @param loginForm 登录表单
-     * @param session   session对象
      * @return 返回失败或成功
      */
-    Result login(LoginFormDTO loginForm, HttpSession session);
+    Result login(LoginFormDTO loginForm);
 }
